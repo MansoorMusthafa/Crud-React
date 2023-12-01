@@ -4,23 +4,27 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Task = () => {
-  const [lists, setList] = useState([
+  const list = [
     {
       id: 1,
       name: "HTML",
       price: "1",
+      completed: false,
     },
     {
       id: 2,
       name: "CSS",
       price: "1",
+      completed: false,
     },
-  ]);
+  ];
+  const [lists, setList] = useState(list);
   const [updateState, setUpdateState] = useState(-1);
 
   function handleEdit(id) {
     setUpdateState(id);
   }
+
   const deleteFun = () =>
     toast.success("🦄 Skills Deleted Successfully", {
       position: "top-center",
@@ -32,10 +36,18 @@ const Task = () => {
       progress: undefined,
       theme: "colored",
     });
+
   function handleDelete(id) {
     const newlist = lists.filter((li) => li.id !== id);
     setList(newlist);
     deleteFun();
+  }
+
+  function handleToggleComplete(id) {
+    const updatedLists = lists.map((item) =>
+      item.id === id ? { ...item, completed: !item.completed } : item
+    );
+    setList(updatedLists);
   }
 
   function handleSubmit(event) {
@@ -65,9 +77,17 @@ const Task = () => {
                     current={current}
                     lists={lists}
                     setList={setList}
+                    setUpdateState={setUpdateState}
                   />
                 ) : (
                   <tr key={current.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={current.completed}
+                        onChange={() => handleToggleComplete(current.id)}
+                      />
+                    </td>
                     <td>{current.name}</td>
                     <td>{current.price}</td>
                     <td>
@@ -98,7 +118,7 @@ const Task = () => {
   );
 };
 
-function EditList({ current, lists, setList }) {
+function EditList({ current, lists, setList, setUpdateState }) {
   function handInputname(event) {
     const value = event.target.value;
     const newlist = lists.map((li) =>
@@ -120,6 +140,7 @@ function EditList({ current, lists, setList }) {
   function handleUpdate(event) {
     event.preventDefault();
     // Logic for update if needed
+    setUpdateState(-1);
   }
 
   return (
@@ -150,7 +171,7 @@ function EditList({ current, lists, setList }) {
 function AddList({ setList, lists }) {
   const nameRef = useRef();
   const priceRef = useRef();
-  const newId = lists.length + 1; // Generate a new ID based on the length of the existing list
+  const newId = lists.length + 1;
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -160,6 +181,7 @@ function AddList({ setList, lists }) {
       id: newId,
       name,
       price,
+      completed: false,
     };
     setList((prevList) => {
       return [...prevList, newlist];
@@ -167,6 +189,7 @@ function AddList({ setList, lists }) {
     nameRef.current.value = "";
     priceRef.current.value = "";
   }
+
   const notify = () =>
     toast.success("🦄 Skills Added Successfully", {
       position: "top-center",
@@ -178,6 +201,7 @@ function AddList({ setList, lists }) {
       progress: undefined,
       theme: "colored",
     });
+
   return (
     <div className="addContainer wrapper">
       <form className="addForm" onSubmit={handleSubmit}>
