@@ -7,13 +7,13 @@ const Task = () => {
   const list = [
     {
       id: 1,
-      name: "HTML",
+      name: "Javascript",
       price: "1",
       completed: false,
     },
     {
       id: 2,
-      name: "CSS",
+      name: "React js",
       price: "1",
       completed: false,
     },
